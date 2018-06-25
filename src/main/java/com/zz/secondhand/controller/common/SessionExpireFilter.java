@@ -4,7 +4,7 @@ import com.zz.secondhand.common.Const;
 import com.zz.secondhand.entity.User;
 import com.zz.secondhand.util.CookieUtil;
 import com.zz.secondhand.util.JsonUtil;
-import com.zz.secondhand.util.RedisPoolUtil;
+import com.zz.secondhand.util.RedisShardedPoolUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,11 +24,11 @@ public class SessionExpireFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isNotEmpty(loginToken)){
-            String userJsonStr = RedisPoolUtil.get(loginToken);
+            String userJsonStr = RedisShardedPoolUtil.get(loginToken);
             User user  = JsonUtil.string2Obj(userJsonStr,User.class);
             //如果user不是空则重置session过期时间
             if(user != null){
-                RedisPoolUtil.expire(loginToken, Const.RedisCacheExTime.REDIS_SESSION_TIME);
+                RedisShardedPoolUtil.expire(loginToken, Const.RedisCacheExTime.REDIS_SESSION_TIME);
             }
         }
         log.info("doFilter");

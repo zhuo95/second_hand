@@ -6,7 +6,7 @@ import com.zz.secondhand.entity.User;
 import com.zz.secondhand.service.IUserService;
 import com.zz.secondhand.util.CookieUtil;
 import com.zz.secondhand.util.JsonUtil;
-import com.zz.secondhand.util.RedisPoolUtil;
+import com.zz.secondhand.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,7 +39,7 @@ public class UserController {
         if(response.isSuccess()){
            // session.setAttribute(Const.CURRENT_USER,response.getData());
             //放入redis
-            RedisPoolUtil.setEx(session.getId(), Const.RedisCacheExTime.REDIS_SESSION_TIME ,JsonUtil.obj2String(response.getData()));
+            RedisShardedPoolUtil.setEx(session.getId(), Const.RedisCacheExTime.REDIS_SESSION_TIME ,JsonUtil.obj2String(response.getData()));
             //放入cookie
             CookieUtil.writeLoginToken(rs,session.getId());
         }
@@ -53,7 +53,7 @@ public class UserController {
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.creatByErrorMessage("用户未登录");
         }
-        String userJsonStr = RedisPoolUtil.get(loginToken);
+        String userJsonStr = RedisShardedPoolUtil.get(loginToken);
         User user = JsonUtil.string2Obj(userJsonStr,User.class);
         if(user!=null){
             return ServerResponse.creatBySuccess(user);
@@ -67,7 +67,7 @@ public class UserController {
     public ServerResponse<String> logout(HttpServletRequest request,HttpServletResponse response){
         String loginToken = CookieUtil.readLoginToken(request);
         CookieUtil.delLoginToken(request,response);
-        RedisPoolUtil.del(loginToken);
+        RedisShardedPoolUtil.del(loginToken);
         return ServerResponse.creatBySuccess();
     }
 
