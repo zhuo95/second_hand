@@ -7,4 +7,6 @@ public interface IUserService {
     ServerResponse login(String username, String password);
 
     ServerResponse<String> register(User user);
+
+    ServerResponse<User> getUserInfoById(Long id);
 }

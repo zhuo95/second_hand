@@ -22,8 +22,14 @@ public class User {
 
     private String avatar;
 
-    @Column(length = 20)
+    @Column(length = 50)
     private String username;
+
+    @Column(length = 50)
+    private String email;
+
+    @Column(length = 50)
+    private String contactInfo;
 
     @Column(length = 100)
     private String password;

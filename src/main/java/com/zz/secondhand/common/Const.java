@@ -21,4 +21,9 @@ public class Const {
         int GENDER_FEMALE = 0;
         int GENDER_MALE = 1;
     }
+
+    public interface ProductStatus{
+        int PRODUCT_ON_SALE = 0;
+        int PRODUCT_NOT_SALE = 1;
+    }
 }

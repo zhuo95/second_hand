@@ -75,5 +75,14 @@ public class UserServiceImpl implements IUserService {
         return ServerResponse.creatBySuccessMessage("注册成功");
     }
 
+    public ServerResponse<User> getUserInfoById(Long id){
+        User user = userRepository.findById(id).orElse(null);
+        if(user==null) return ServerResponse.creatByErrorMessage("找不到该用户");
+        user.setPassword(StringUtils.EMPTY);
+        user.setQuestion(StringUtils.EMPTY);
+        user.setAnswer(StringUtils.EMPTY);
+        return ServerResponse.creatBySuccess(user);
+    }
+
 
 }

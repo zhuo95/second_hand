@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class CookieUtil {
     //一级域名下，二级域名能读到，同级的读不到
-    private final static String COOKIE_DOMAIN= ".zhuo9529.com";
+    private final static String COOKIE_DOMAIN= "localhost";
     private final static String COOKIE_NAME="zz_second_hand_login_token";
     //写入cookie
     public static void writeLoginToken(HttpServletResponse response,String token){

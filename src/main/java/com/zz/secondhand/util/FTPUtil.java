@@ -62,24 +62,25 @@ public class FTPUtil {
     }
 
 
-//    //删除文件
-//    public static boolean deleteFile(String url){
-//        FTPUtil ftpUtil = new FTPUtil(ftpIP,21,ftpUser,ftpPass);
-//        String name = url.substring(url.lastIndexOf('/')+1,url.length());
-//        return ftpUtil.delete(name);
-//    }
-//    //删除文件
-//    private boolean delete(String name){
-//        boolean deleted = true;
-//        if(connectServer(this.ip,this.port,this.user,this.psw)){
-//            try{
-//                deleted = ftpClient.deleteFile("img/"+name);
-//            }catch (Exception e){
-//                deleted = false;
-//            }
-//        }else deleted = false;
-//        return deleted;
-//    }
+    //删除文件
+    public static boolean deleteFile(String url){
+        FTPUtil ftpUtil = new FTPUtil(ftpIP,21,ftpUser,ftpPass);
+        String name = url.substring(url.lastIndexOf('/')+1,url.length());
+        return ftpUtil.delete(name);
+    }
+    //删除文件
+    private boolean delete(String name){
+        boolean deleted = true;
+        if(connectServer(this.ip,this.port,this.user,this.psw)){
+            try{
+                deleted = ftpClient.deleteFile("img/"+name);
+            }catch (Exception e){
+                deleted = false;
+                log.error("ftp delete error",e);
+            }
+        }else deleted = false;
+        return deleted;
+    }
 
     //连接ftp服务器
     private boolean connectServer(String ip,int port,String user , String psw){

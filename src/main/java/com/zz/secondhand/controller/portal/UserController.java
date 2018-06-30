@@ -1,4 +1,4 @@
-package com.zz.secondhand.controller;
+package com.zz.secondhand.controller.portal;
 
 import com.zz.secondhand.common.Const;
 import com.zz.secondhand.common.ServerResponse;
@@ -10,10 +10,7 @@ import com.zz.secondhand.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,6 +72,12 @@ public class UserController {
     @ResponseBody
     public ServerResponse<String> register(User user){
         return iUserService.register(user);
+    }
+
+
+    @GetMapping({"id"})
+    public ServerResponse<User> getUserInfoById(@RequestParam(value = "id") Long id){
+        return iUserService.getUserInfoById(id);
     }
 
 }
