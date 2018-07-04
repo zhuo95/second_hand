@@ -27,5 +27,7 @@ public class Transaction {
 
     private Long productId;
 
+    private Integer status;
+
     private Date createTime;
 }

@@ -31,7 +31,6 @@ public class SessionExpireFilter implements Filter {
                 RedisShardedPoolUtil.expire(loginToken, Const.RedisCacheExTime.REDIS_SESSION_TIME);
             }
         }
-        log.info("doFilter");
         filterChain.doFilter(servletRequest,servletResponse);
     }
 

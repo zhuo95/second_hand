@@ -140,5 +140,39 @@ public class ProductController {
         return iProductService.buyByProductId(id,user.getId());
     }
 
+    //取消购买或者卖
+    @PatchMapping("cancel/{id}")
+    @ResponseBody
+    public ServerResponse cancelTransactionByProductId(@RequestParam(value = "id")Long id, HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if(StringUtils.isEmpty(loginToken)){
+            return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());
+        }
+        String userJsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(userJsonStr,User.class);
+        if(user==null){
+            return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());
+        }
+
+        return iProductService.cancelTransaction(id,user.getId());
+    }
+
+    //完成交易
+    @PatchMapping("finish/{id}")
+    @ResponseBody
+    public ServerResponse finishTransaction(@RequestParam(value = "id")Long id, HttpServletRequest request){
+        String loginToken = CookieUtil.readLoginToken(request);
+        if(StringUtils.isEmpty(loginToken)){
+            return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());
+        }
+        String userJsonStr = RedisShardedPoolUtil.get(loginToken);
+        User user = JsonUtil.string2Obj(userJsonStr,User.class);
+        if(user==null){
+            return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());
+        }
+
+        return iProductService.finishTransaction(id,user.getId());
+    }
+
 
 }

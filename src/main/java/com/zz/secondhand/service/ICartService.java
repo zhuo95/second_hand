@@ -9,4 +9,6 @@ public interface ICartService {
     ServerResponse<Page> getBought(Long userId,int pageIndex, int pageSize);
 
     ServerResponse cancelOrder(Long userId,Long productId);
+
+    void closeOrder(int day);
 }

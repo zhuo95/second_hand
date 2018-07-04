@@ -116,10 +116,12 @@ public class ProductServiceImpl implements IProductService {
         if(!product.getUserId().equals(userId)){
             return ServerResponse.creatByErrorMessage("没有权限操作");
         }
-        //删除逻辑
-        productRepository.delete(product);
+        //下架
+        product.setStatus(Const.ProductStatus.PRODUCT_NOT_SALE);
+        product.setUpdateTime(new Date());
+        productRepository.save(product);
         //删除图片
-        if(!FTPUtil.deleteFile(product.getImage())) return ServerResponse.creatByErrorMessage("图片删除失败");
+        //if(!FTPUtil.deleteFile(product.getImage())) return ServerResponse.creatByErrorMessage("图片删除失败");
         return ServerResponse.creatBySuccessMessage("操作成功");
     }
 
@@ -140,6 +142,40 @@ public class ProductServiceImpl implements IProductService {
         transaction.setCreateTime(new Date());
         transactionRepository.save(transaction);
         return ServerResponse.creatBySuccess("操作成功");
+    }
+
+    //取消购买或者卖给某人
+    public ServerResponse cancelTransaction(Long productId,Long userId){
+        Transaction transaction = transactionRepository.findByProductId(productId);
+        if(transaction==null) return ServerResponse.creatByErrorMessage("没有该交易");
+        if(!transaction.getBoughtUserId().equals(userId)&&!transaction.getSoldUserId().equals(userId)){
+            return ServerResponse.creatByErrorMessage("无权操作");
+        }
+        Product p = productRepository.findById(transaction.getProductId()).orElse(null);
+        if(p==null) return ServerResponse.creatByErrorMessage("未找到该商品");
+        p.setStatus(Const.ProductStatus.PRODUCT_ON_SALE);
+        p.setUpdateTime(new Date());
+        productRepository.save(p);
+
+        transactionRepository.delete(transaction);
+        return ServerResponse.creatByErrorMessage("取消成功");
+    }
+
+    //完成交易
+    public ServerResponse finishTransaction(Long productId,Long userId){
+        Transaction transaction = transactionRepository.findByProductId(productId);
+        if(transaction==null) return ServerResponse.creatByErrorMessage("没有该交易");
+        if(!transaction.getSoldUserId().equals(userId)){
+            return ServerResponse.creatByErrorMessage("无权操作");
+        }
+        Product p = productRepository.findById(transaction.getProductId()).orElse(null);
+        if(p==null) return ServerResponse.creatByErrorMessage("未找到该商品");
+        p.setStatus(Const.ProductStatus.PRODUCT_NOT_SALE);
+        p.setUpdateTime(new Date());
+        productRepository.save(p);
+        transaction.setStatus(Const.TransactionStatus.TRANSACTION_COMPLETE);
+        transactionRepository.save(transaction);
+        return ServerResponse.creatByErrorMessage("交易成功");
     }
 
 

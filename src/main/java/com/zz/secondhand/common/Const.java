@@ -26,4 +26,13 @@ public class Const {
         int PRODUCT_ON_SALE = 0;
         int PRODUCT_NOT_SALE = 1;
     }
+
+    public interface TransactionStatus{
+        int TRANSACTION_COMPLETE = 0;
+        int TRANSACTION_NOT_COMPLETE = 1;
+    }
+
+    public interface REDIS_LOCK{
+        String CLOSE_ORDER_TASK_LOCK = "CLOSE_ORDER_TASK_LOCK";
+    }
 }

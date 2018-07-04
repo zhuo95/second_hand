@@ -10,6 +10,7 @@ import com.zz.secondhand.repository.TransactionRepository;
 import com.zz.secondhand.service.ICartService;
 import com.zz.secondhand.util.DateTimeUtil;
 import com.zz.secondhand.vo.CartProductVo;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -90,6 +91,23 @@ public class CartServiceImpl implements ICartService {
         product.setUpdateTime(new Date());
         productRepository.save(product);
         return ServerResponse.creatBySuccessMessage("操作成功");
+    }
+
+    //每天定时的关掉一些交易订单如果未完成
+    public void closeOrder(int day){
+        Date time = DateUtils.addDays(new Date(),-day);
+        List<Transaction> transactions = transactionRepository.findAllByCreateTimeBeforeAndStatus(time,Const.TransactionStatus.TRANSACTION_NOT_COMPLETE);
+        for( Transaction t : transactions){
+            Product p = productRepository.findById(t.getProductId()).orElse(null);
+            if(p!=null){
+                p.setStatus(Const.ProductStatus.PRODUCT_ON_SALE);
+                p.setUpdateTime(new Date());
+                productRepository.save(p);
+            }
+
+            transactionRepository.delete(t);
+        }
+
     }
 
 }

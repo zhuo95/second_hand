@@ -15,4 +15,8 @@ public interface IProductService {
     ServerResponse del(Long productId,Long userId);
 
     ServerResponse buyByProductId(Long productId,Long userId);
+
+    ServerResponse cancelTransaction(Long productId,Long userId);
+
+    ServerResponse finishTransaction(Long productId,Long userId);
 }
