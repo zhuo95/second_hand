@@ -5,6 +5,7 @@ import com.zz.secondhand.common.ServerResponse;
 import com.zz.secondhand.entity.User;
 import com.zz.secondhand.service.ICartService;
 import com.zz.secondhand.util.CookieUtil;
+import com.zz.secondhand.util.FTPUtil;
 import com.zz.secondhand.util.JsonUtil;
 import com.zz.secondhand.util.RedisShardedPoolUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/cart/")
@@ -23,7 +25,7 @@ public class CartController {
 
     @GetMapping("buy")
     @ResponseBody
-    public ServerResponse getBought(HttpServletRequest request,@RequestParam(value = "pageIndex",defaultValue ="0") int pageIndex,
+    public ServerResponse getBought(HttpServletRequest request,@RequestParam(value = "pageNum",defaultValue ="0") int pageNum,
                                   @RequestParam(value = "pageSize",defaultValue = "5") int pageSize){
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
@@ -35,7 +37,7 @@ public class CartController {
             return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());
         }
 
-        return iCartService.getBought(user.getId(),pageIndex,pageSize);
+        return iCartService.getBought(user.getId(),pageNum,pageSize);
 
     }
 
@@ -61,7 +63,7 @@ public class CartController {
 
     @DeleteMapping("{id}")
     @ResponseBody
-    public ServerResponse cancelOrder(@RequestParam(value = "id") Long id,HttpServletRequest request){
+    public ServerResponse cancelOrder(@PathVariable(value = "id") Long id,HttpServletRequest request){
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());

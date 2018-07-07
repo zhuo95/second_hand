@@ -63,20 +63,22 @@ public class FTPUtil {
 
 
     //删除文件
-    public static boolean deleteFile(String url){
+    public static boolean deleteFile(String url) throws IOException{
         FTPUtil ftpUtil = new FTPUtil(ftpIP,21,ftpUser,ftpPass);
         String name = url.substring(url.lastIndexOf('/')+1,url.length());
         return ftpUtil.delete(name);
     }
     //删除文件
-    private boolean delete(String name){
+    private boolean delete(String name) throws IOException {
         boolean deleted = true;
         if(connectServer(this.ip,this.port,this.user,this.psw)){
             try{
-                deleted = ftpClient.deleteFile("img/"+name);
+                deleted = ftpClient.deleteFile(name);
             }catch (Exception e){
                 deleted = false;
                 log.error("ftp delete error",e);
+            }finally {
+                ftpClient.disconnect();
             }
         }else deleted = false;
         return deleted;

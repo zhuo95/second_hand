@@ -19,6 +19,7 @@ public class RedisPoolUtil {
             RedisPool.returnResource(jedis);
             return result;
         }
+        RedisPool.returnResource(jedis);
         return result;
     }
 
@@ -35,6 +36,7 @@ public class RedisPoolUtil {
             RedisPool.returnResource(jedis);
             return result;
         }
+        RedisPool.returnResource(jedis);
         return result;
     }
 
@@ -51,6 +53,7 @@ public class RedisPoolUtil {
             RedisPool.returnResource(jedis);
             return result;
         }
+        RedisPool.returnResource(jedis);
         return result;
     }
 
@@ -67,6 +70,7 @@ public class RedisPoolUtil {
             RedisPool.returnResource(jedis);
             return result;
         }
+        RedisPool.returnResource(jedis);
         return result;
     }
 
@@ -83,6 +87,7 @@ public class RedisPoolUtil {
             RedisPool.returnResource(jedis);
             return result;
         }
+        RedisPool.returnResource(jedis);
         return result;
     }
 

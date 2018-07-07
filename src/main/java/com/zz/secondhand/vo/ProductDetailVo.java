@@ -15,9 +15,9 @@ public class ProductDetailVo {
     private Long id;
     private Integer categoryId;
     private String name;
-    private String subtitle;
     private String image;
     private BigDecimal price;
+    private String detail;
     private Integer status;
     private String createTime;
     private String updateTime;

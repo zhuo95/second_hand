@@ -15,13 +15,15 @@ import java.math.BigDecimal;
 public class CartProductVo {
     private Long productId;
 
-    private Long userId; //对方userid
+    private String userInfo; //对方userid
 
     private String name;
 
     private String image;
 
     private BigDecimal price;
+
+    private Boolean sold;
 
     private String boughtTime;
 }

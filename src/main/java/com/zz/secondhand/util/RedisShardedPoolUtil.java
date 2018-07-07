@@ -21,6 +21,7 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
             return result;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
@@ -37,6 +38,7 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
             return result;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
@@ -53,6 +55,7 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
             return result;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
@@ -69,6 +72,7 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
             return result;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
@@ -85,6 +89,7 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
             return result;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
@@ -101,6 +106,7 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
             return result;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 
@@ -117,6 +123,7 @@ public class RedisShardedPoolUtil {
             RedisShardedPool.returnResource(jedis);
             return result;
         }
+        RedisShardedPool.returnResource(jedis);
         return result;
     }
 

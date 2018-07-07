@@ -10,7 +10,7 @@ import java.util.List;
 public interface TransactionRepository  extends JpaRepository<Transaction,Integer> {
     Transaction findByProductId(Long productId);
 
-    List<Transaction> findAllByBoughtUserId(Long boughtUserId);
+    List<Transaction> findAllByBoughtUserIdAndStatus(Long boughtUserId,int status);
 
     List<Transaction> findAllByCreateTimeBeforeAndStatus(Date date,int status);
 }

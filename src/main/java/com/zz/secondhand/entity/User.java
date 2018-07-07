@@ -20,6 +20,8 @@ public class User {
 
     private Integer gender;
 
+    private String nickName;
+
     private String avatar;
 
     @Column(length = 50)

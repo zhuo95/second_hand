@@ -9,8 +9,12 @@ import java.util.List;
 
 public interface ProductRepository  extends JpaRepository<Product,Long> {
 
-    Page<Product> findAllByCategoryIdInAndNameLikeAndStatus(List<Integer> categoryIds,String keyword, Pageable pageable,int status);
+    Page<Product> findAllByNameLikeAndStatus(String keyword, Pageable pageable,int status);
 
-    List<Product> findAllByUserId(Long userId);
+    Page<Product> findAllByCategoryIdInAndStatus(List<Integer> categoryIds,int status,Pageable pageable);
+
+    List<Product> findAllByUserIdAndStatus(Long userId,int status);
+
+    Page<Product> findAllByStatus(int status,Pageable pageable);
 
 }

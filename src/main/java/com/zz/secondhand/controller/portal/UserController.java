@@ -39,7 +39,7 @@ public class UserController {
             RedisShardedPoolUtil.setEx(session.getId(), Const.RedisCacheExTime.REDIS_SESSION_TIME ,JsonUtil.obj2String(response.getData()));
             //放入cookie
             CookieUtil.writeLoginToken(rs,session.getId());
-        }
+    }
         return response;
     }
 

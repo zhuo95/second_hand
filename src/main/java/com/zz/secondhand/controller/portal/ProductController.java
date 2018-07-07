@@ -41,9 +41,16 @@ public class ProductController {
     @ResponseBody
     public ServerResponse list(@RequestParam(value = "keyword",required = false)String keyord,
                                @RequestParam(value = "categoryId",required = false)Integer categoryId,
-                               @RequestParam(value = "pageNum",defaultValue = "1")int pageNum,
+                               @RequestParam(value = "pageNum",defaultValue = "0")int pageNum,
                                @RequestParam(value = "pageSize",defaultValue = "10")int pageSize){
-        return iProductService.list(keyord,categoryId,pageNum,pageSize);
+            return iProductService.list(keyord,categoryId,pageNum,pageSize);
+    }
+
+    @GetMapping("listAll")
+    @ResponseBody
+    public ServerResponse listAll(@RequestParam(value = "pageNum",defaultValue = "0")int pageNum,
+                                  @RequestParam(value = "pageSize",defaultValue = "10")int pageSize){
+        return iProductService.listAll(pageNum,pageSize);
     }
 
     /**
@@ -75,7 +82,7 @@ public class ProductController {
     //upload img
     @PostMapping("upload")
     @ResponseBody
-    public ServerResponse uploadImg(Integer productId,@RequestParam(value = "upload_file",required = false)MultipartFile multipartFile, HttpServletRequest request){
+    public ServerResponse uploadImg(@RequestParam(value = "upload_file",required = false)MultipartFile multipartFile, HttpServletRequest request){
         //判断session
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
@@ -104,10 +111,10 @@ public class ProductController {
         return ServerResponse.creatBySuccess(fileMap);
     }
 
-    //出售完毕后删除
+    //出售完毕后删除，或者下架
     @DeleteMapping("{id}")
     @ResponseBody
-    public ServerResponse deleteByProductId(@RequestParam(value = "id")Long id, HttpServletRequest request){
+    public ServerResponse deleteByProductId(@PathVariable(value = "id")Long id, HttpServletRequest request){
         //判断session
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
@@ -126,7 +133,7 @@ public class ProductController {
     //购买
     @PostMapping({"{id}"})
     @ResponseBody
-    public ServerResponse buyByProductId(@RequestParam(value = "id")Long id, HttpServletRequest request){
+    public ServerResponse buyByProductId(@PathVariable(value = "id")Long id, HttpServletRequest request){
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());
@@ -140,10 +147,10 @@ public class ProductController {
         return iProductService.buyByProductId(id,user.getId());
     }
 
-    //取消购买或者卖
-    @PatchMapping("cancel/{id}")
+    //取消卖给当前人
+    @PutMapping("cancel/{id}")
     @ResponseBody
-    public ServerResponse cancelTransactionByProductId(@RequestParam(value = "id")Long id, HttpServletRequest request){
+    public ServerResponse cancelTransactionByProductId(@PathVariable(value = "id")Long id, HttpServletRequest request){
         String loginToken = CookieUtil.readLoginToken(request);
         if(StringUtils.isEmpty(loginToken)){
             return ServerResponse.creatByErrorCodeMessage(ResponseCode.NEEDLOG_IN.getCode(),ResponseCode.NEEDLOG_IN.getDesc());
@@ -158,7 +165,7 @@ public class ProductController {
     }
 
     //完成交易
-    @PatchMapping("finish/{id}")
+    @PutMapping("finish/{id}")
     @ResponseBody
     public ServerResponse finishTransaction(@RequestParam(value = "id")Long id, HttpServletRequest request){
         String loginToken = CookieUtil.readLoginToken(request);

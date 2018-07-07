@@ -11,6 +11,7 @@ import com.zz.secondhand.entity.User;
 import com.zz.secondhand.repository.CategoryRepository;
 import com.zz.secondhand.repository.ProductRepository;
 import com.zz.secondhand.repository.TransactionRepository;
+import com.zz.secondhand.repository.UserRepository;
 import com.zz.secondhand.service.ICategoryService;
 import com.zz.secondhand.service.IProductService;
 import com.zz.secondhand.util.DateTimeUtil;
@@ -36,15 +37,18 @@ public class ProductServiceImpl implements IProductService {
     private ICategoryService iCategoryService;
     @Autowired
     private TransactionRepository transactionRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
 
-    public ServerResponse getProductDetail(Long prductId) {
-        Product product = productRepository.findById(prductId).orElse(null);
+    public ServerResponse getProductDetail(Long productId) {
+        Product product = productRepository.findById(productId).orElse(null);
         if(product==null){
             return ServerResponse.creatByErrorMessage("找不到该商品");
         }
         ProductDetailVo productDetailVo = assembleProducDetail(product);
+        if(productDetailVo==null) return ServerResponse.creatByErrorMessage("查找商品有错误，找不到卖家信息!");
         return ServerResponse.creatBySuccess(productDetailVo);
     }
 //组装VO
@@ -55,6 +59,7 @@ public class ProductServiceImpl implements IProductService {
         productDetailVo.setImage(product.getImage());
         productDetailVo.setPrice(product.getPrice());
         productDetailVo.setStatus(product.getStatus());
+        productDetailVo.setDetail(product.getDetail());
         productDetailVo.setCreateTime(DateTimeUtil.dateToStr(product.getCreateTime()));
         productDetailVo.setUpdateTime(DateTimeUtil.dateToStr(product.getUpdateTime()));
         //查找根节点
@@ -64,6 +69,13 @@ public class ProductServiceImpl implements IProductService {
         }else{
             productDetailVo.setParentCategoryId(category.getParentId());
         }
+        User user = userRepository.findById(product.getUserId()).orElse(null);
+        if(user==null){
+            return null;
+        }
+        productDetailVo.setAvatar(user.getAvatar());
+        productDetailVo.setSellerInfo(user.getContactInfo());
+        productDetailVo.setSellerName(user.getNickName());
         return productDetailVo;
     }
 
@@ -84,11 +96,22 @@ public class ProductServiceImpl implements IProductService {
         //两端加百分号, e.g. WHERE CustomerName LIKE '%or%'	Finds any values that have "or" in any position
         if(StringUtils.isNotBlank(keyword)){
             keyword = new StringBuilder().append("%").append(keyword).append("%").toString();
+            Sort sort =  new Sort(Sort.Direction.DESC, "id");
+            Pageable pageable = PageRequest.of(pageIndex,pageSize,sort);
+            Page<Product> products = productRepository.findAllByNameLikeAndStatus(keyword,pageable,Const.ProductStatus.PRODUCT_ON_SALE);
+            return ServerResponse.creatBySuccess(products);
         }
         Sort sort =  new Sort(Sort.Direction.DESC, "id");
         Pageable pageable = PageRequest.of(pageIndex,pageSize,sort);
-        Page<Product> products = productRepository.findAllByCategoryIdInAndNameLikeAndStatus(categoryIdList,keyword,pageable,Const.ProductStatus.PRODUCT_ON_SALE);
+        Page<Product> products = productRepository.findAllByCategoryIdInAndStatus(categoryIdList,Const.ProductStatus.PRODUCT_ON_SALE,pageable);
+        return ServerResponse.creatBySuccess(products);
+    }
 
+    //listAll
+    public ServerResponse<Page> listAll(int pageIndex,int pageSize ){
+        Sort sort =  new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(pageIndex,pageSize,sort);
+        Page<Product> products = productRepository.findAllByStatus(Const.ProductStatus.PRODUCT_ON_SALE,pageable);
         return ServerResponse.creatBySuccess(products);
     }
 
@@ -98,6 +121,7 @@ public class ProductServiceImpl implements IProductService {
             return ServerResponse.creatByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
         product.setStatus(Const.ProductStatus.PRODUCT_ON_SALE);
+        product.setUserId(user.getId());
         product.setCreateTime(new Date());
         product.setUpdateTime(new Date());
         productRepository.save(product);
@@ -140,11 +164,12 @@ public class ProductServiceImpl implements IProductService {
         transaction.setBoughtUserId(userId);
         transaction.setSoldUserId(product.getUserId());
         transaction.setCreateTime(new Date());
+        transaction.setStatus(Const.TransactionStatus.TRANSACTION_NOT_COMPLETE);
         transactionRepository.save(transaction);
         return ServerResponse.creatBySuccess("操作成功");
     }
 
-    //取消购买或者卖给某人
+    //取消卖给某人
     public ServerResponse cancelTransaction(Long productId,Long userId){
         Transaction transaction = transactionRepository.findByProductId(productId);
         if(transaction==null) return ServerResponse.creatByErrorMessage("没有该交易");
@@ -158,7 +183,7 @@ public class ProductServiceImpl implements IProductService {
         productRepository.save(p);
 
         transactionRepository.delete(transaction);
-        return ServerResponse.creatByErrorMessage("取消成功");
+        return ServerResponse.creatBySuccessMessage("取消成功");
     }
 
     //完成交易

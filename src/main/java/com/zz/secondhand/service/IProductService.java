@@ -19,4 +19,6 @@ public interface IProductService {
     ServerResponse cancelTransaction(Long productId,Long userId);
 
     ServerResponse finishTransaction(Long productId,Long userId);
+
+    ServerResponse<Page> listAll(int pageIndex,int pageSize );
 }
